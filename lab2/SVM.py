@@ -5,11 +5,6 @@ from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
 
-# TODO : Call minimize
-# TODO : Extract the non-zero α values
-# TODO : Calculate the b value using equation (7).
-
-
 class SVM():
 
     def __init__(self, start, upperBound, samples, target, data):
@@ -22,7 +17,6 @@ class SVM():
         self.P = self.Pmatrix()
         self.sv = []
         self.b = None
-        self.bBit = []
 
     # def __str__(self):
     #     return "alpha: " + str(self.alpha)
@@ -30,7 +24,7 @@ class SVM():
     #  A linear kernel function
 
     def Pmatrix(self):
-        self.P = np.empty([self.samples, self.samples])
+        self.P = np.zeros([self.samples, self.samples])
         for i in range(self.samples):
             for j in range(self.samples):
                 self.P[i, j] = self.target[i]*self.target[j] * \
@@ -44,20 +38,22 @@ class SVM():
 
     #  A polynomial kernel function
 
-    def polyKernalFunction(self, x, y, p):
+    def polyKernalFunction(self, x, y, p=3):
         K = np.power((np.dot(x, y)+1), p)
         return K
 
     # A Radial Basis Function (RBF) kernels
-    def RBFKernalFunction(self, x, y, sigma):
-        K = np.exp(-(np.pow((np.linalg.norm(x-y)), 2))/(2*sigma**2))
+    def RBFKernalFunction(self, x, y, sigma=0.5):
+        K = np.exp(-(np.power((np.linalg.norm(x-y)), 2))/(2*sigma**2))
         return K
 
     # The function objective
 
     def objectiveFunction(self, alpha):
-        objective = 0.5*(np.sum([
-            np.dot(np.dot(np.transpose([alpha]), [alpha]), self.P)]))-np.sum(alpha)
+        # objective = 0.5*(np.sum([
+        #     np.dot(np.dot(np.transpose([alpha]), [alpha]), self.P)]))-np.sum(alpha)
+
+        objective = (1/2)*np.dot(alpha, np.dot(alpha, self.P)) - np.sum(alpha)
         return objective
 
     #  zeroFunction constraint
@@ -70,44 +66,43 @@ class SVM():
 
     def indicator(self, x, y):
         self.threshold(x, y)
-        ind = np.subtract(self.bBit, self.b)
+        ind = 0
+        for j in range(len(self.sv[0])):
+            ind += self.sv[2][j]*self.sv[1][j] * \
+                self.linearKernalFunction(np.array([x, y]), self.sv[0][j])
+        ind = ind - self.b
         return ind
 
     # Threshold
     def threshold(self, x, y):
-        bv = []
+        self.b = 0
         for j in range(len(self.sv[0])):
-            self.bBit.append(np.dot(self.sv[2][j], np.dot(
-                self.sv[1][j], self.linearKernalFunction(self.sv[0][j], [x, y]))))
-            bv.append(self.bBit-self.sv[1][j])
-        self.b = np.sum(bv)
+            self. b += self.sv[2][j]*self.sv[1][j] * \
+                self.linearKernalFunction(self.sv[0][0], self.sv[0][j])
+        self.b = self.b-self.sv[1][0]
         return self.b
 
     def mini(self):
         ret = minimize(self.objectiveFunction, self.start,
                        bounds=self.bounds, constraints=self.constraints)
-        self.alpha = ret['x']
+        alpha = ret['x']
 
         # self.alpha = np.array([a*int(a<10**-8) for a in self.alpha if a < 10**-8])
-        for i, e in enumerate(self.alpha):
+        for i, e in enumerate(alpha):
             if e < 10**-8:
-                self.alpha[i] = 0
+                alpha[i] = 0
 
-        idx = np.nonzero(self.alpha)[0]
+        idx = np.nonzero(alpha)[0]
         x = []
         t = []
         a = []
         for i in idx:
             x.append(self.data[i])
             t.append(self.target[i])
-            a.append(self.alpha[i])
+            a.append(alpha[i])
 
         self.sv = (x, t, a)
         return self.sv
-
-    # TODO : Code for generating test data and for visualizing the results.
-    # TODO : Generating Test Data
-    # TODO : Plotting
 
 
 def generateTestData():
@@ -150,7 +145,7 @@ def main():
     np.random.seed(100)
     classA, classB, inputs, targets, samples = generateTestData()
     start = np.zeros(samples)
-    upperBound = None
+    upperBound = 10
     svm = SVM(start, upperBound, samples, targets, inputs)
     sv = svm.mini()
     plot(classA, classB)
