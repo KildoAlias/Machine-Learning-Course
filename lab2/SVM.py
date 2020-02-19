@@ -18,11 +18,6 @@ class SVM():
         self.sv = []
         self.b = None
 
-    # def __str__(self):
-    #     return "alpha: " + str(self.alpha)
-
-    #  A linear kernel function
-
     def Pmatrix(self):
         self.P = np.zeros([self.samples, self.samples])
         for i in range(self.samples):
@@ -32,13 +27,15 @@ class SVM():
 
         return self.P
 
+    # A linear kernal function
+
     def linearKernalFunction(self, x, y):
         K = np.dot(x, y)
         return K
 
     #  A polynomial kernel function
 
-    def polyKernalFunction(self, x, y, p=3):
+    def polyKernalFunction(self, x, y, p=2):
         K = np.power((np.dot(x, y)+1), p)
         return K
 
@@ -65,7 +62,7 @@ class SVM():
     # The indicator function
 
     def indicator(self, x, y):
-        self.threshold(x, y)
+        self.threshold()
         ind = 0
         for j in range(len(self.sv[0])):
             ind += self.sv[2][j]*self.sv[1][j] * \
@@ -73,14 +70,17 @@ class SVM():
         ind = ind - self.b
         return ind
 
-    # Threshold
-    def threshold(self, x, y):
+    # Threshold (b)
+
+    def threshold(self):
         self.b = 0
         for j in range(len(self.sv[0])):
             self. b += self.sv[2][j]*self.sv[1][j] * \
                 self.linearKernalFunction(self.sv[0][0], self.sv[0][j])
         self.b = self.b-self.sv[1][0]
         return self.b
+
+    # Minimize function
 
     def mini(self):
         ret = minimize(self.objectiveFunction, self.start,
@@ -104,6 +104,8 @@ class SVM():
         self.sv = (x, t, a)
         return self.sv
 
+ # Generate test data
+
 
 def generateTestData():
     classA = np.concatenate((np.random.randn(10, 2) * 0.2 + [1.5, 0.5],
@@ -121,6 +123,8 @@ def generateTestData():
     targets = targets[permute]
     return classA, classB, inputs, targets, samples
 
+# Plot the data
+
 
 def plot(classA, classB):
     plt.plot([p[0] for p in classA], [p[1] for p in classA], 'b.')
@@ -129,6 +133,8 @@ def plot(classA, classB):
     plt.axis('equal')
     plt.savefig('svmplot.pdf')
     return
+
+# Plot the decision boundary
 
 
 def DecisionBoundary(svm):
@@ -140,14 +146,17 @@ def DecisionBoundary(svm):
     plt.contour(xgrid, ygrid, grid, (-1, 0, 1),
                 colors=('red', 'black', 'blue'), linewidths=(1, 3, 1))
 
+# Main function
+
 
 def main():
     np.random.seed(100)
-    classA, classB, inputs, targets, samples = generateTestData()
+    classA, classB, inputs, targets, samples = generateTestData()  # generate the data
     start = np.zeros(samples)
     upperBound = 10
-    svm = SVM(start, upperBound, samples, targets, inputs)
-    sv = svm.mini()
+    svm = SVM(start, upperBound, samples, targets,
+              inputs)  # Initialize the SVM
+    svm.mini()  # call the minimize function
     plot(classA, classB)
     DecisionBoundary(svm)
     plt.show()
