@@ -8,13 +8,6 @@ import numpy as np
 
 # # Lab 3: Bayes Classifier and Boosting
 
-
-# ## Import the libraries
-#
-# In Jupyter, select the cell below and press `ctrl + enter` to import the needed libraries.
-# Check out `labfuns.py` if you are interested in the details.
-
-
 # ## Bayes classifier functions to implement
 #
 # The lab descriptions state what each function should do.
@@ -106,7 +99,6 @@ def classifyBayes(X, prior, mu, sigma):
 
 # The implemented functions can now be summarized into the `BayesClassifier` class, which we will use later to test the classifier, no need to add anything else here:
 
-
 # NOTE: no need to touch this
 class BayesClassifier(object):
     def __init__(self):
@@ -127,11 +119,11 @@ class BayesClassifier(object):
 #
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
 
-X, labels = genBlobs(centers=5)
-mu, sigma = mlParams(X, labels)
+# X, labels = genBlobs(centers=5)
+# mu, sigma = mlParams(X, labels)
 # plotGaussian(X, labels, mu, sigma)
-prior = computePrior(labels)
-classify = classifyBayes(X, prior, mu, sigma)
+# prior = computePrior(labels)
+# classify = classifyBayes(X, prior, mu, sigma)
 
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
@@ -174,17 +166,21 @@ def trainBoost(base_classifier, X, labels, T=10):
         # do classification for each point
         vote = classifiers[-1].classify(X)
 
-        # TODO: Fill in the rest, construct the alphas etc.
-
         # ==========================
-        alpha = 5
-        # alphas.append(alpha) # you will need to append the new alpha
+        wCur = wCur.reshape(1, -1).reshape(-1)
+        error = np.dot(wCur, 1-np.where(vote == labels, 1, 0))
+        alpha = 0.5*(np.log(1-error)-np.log(error))
+        alphas.append(alpha)
+
+        wCur = wCur*np.where(vote == labels, np.exp(-alpha), np.exp(alpha))
+        Z = np.sum(wCur)
+        wCur = wCur/Z
         # ==========================
 
     return classifiers, alphas
 
 
-totallyBoosted = trainBoost(BayesClassifier(), X, labels)
+# totallyBoosted = trainBoost(BayesClassifier(), X, labels)
 
 
 # in:       X - N x d matrix of N data points
