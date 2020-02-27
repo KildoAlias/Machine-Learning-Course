@@ -94,7 +94,6 @@ def classifyBayes(X, prior, mu, sigma):
     # one possible way of finding max a-posteriori once
     # you have computed the log posterior
     h = np.argmax(logProb, axis=0)
-    print(h)
     return h
 
 
@@ -135,6 +134,7 @@ class BayesClassifier(object):
 # plotBoundary(BayesClassifier(), dataset='iris', split=0.7)
 
 # Iris: Final mean classification accuracy  89 with standard deviation 4.16
+# Iris Boosted: Final mean classification accuracy  92.2 with standard deviation 4.14
 # Vowel: Final mean classification accuracy  64.7 with standard deviation 4.03
 # Olivetti: Final mean classification accuracy  87.7 with standard deviation 3.03
 
@@ -181,7 +181,8 @@ def trainBoost(base_classifier, X, labels, T=10):
     return classifiers, alphas
 
 
-# totallyBoosted = trainBoost(BayesClassifier(), X, labels)
+# Nclasses, Ndims = np.shape(mu)
+# classifiers, alphas = trainBoost(BayesClassifier(), X, labels)
 
 
 # in:       X - N x d matrix of N data points
@@ -207,13 +208,15 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         for i in range(Ncomps):
             h = classifiers[i].classify(X)
             for c in range(Nclasses):
-                np.where(h == c, 1, 0)
+                votes[:, c] += alphas[i]*np.where(h == c, 1, 0)
 
         # ==========================
 
         # one way to compute yPred after accumulating the votes
         return np.argmax(votes, axis=1)
 
+
+# yPred = classifyBoost(X, classifiers, alphas, Nclasses)
 
 # The implemented functions can now be summarized another classifer, the `BoostClassifier` class. This class enables boosting different types of classifiers by initializing it with the `base_classifier` argument. No need to add anything here.
 
@@ -246,7 +249,8 @@ class BoostClassifier(object):
 #                dataset='iris', split=0.7)
 
 
-# testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
+# testClassifier(BoostClassifier(BayesClassifier(), T=10),
+#                dataset='vowel', split=0.7)
 
 
 # plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
