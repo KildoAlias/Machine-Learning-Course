@@ -202,7 +202,6 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
     else:
         votes = np.zeros((Npts, Nclasses))
 
-        # TODO: implement classificiation when we have trained several classifiers!
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
         for i in range(Ncomps):
@@ -253,28 +252,36 @@ class BoostClassifier(object):
 #                dataset='vowel', split=0.7)
 
 
-# plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
+# plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris', split=0.7)
 
 
 # Now repeat the steps with a decision tree classifier.
 
 
 # testClassifier(DecisionTreeClassifier(), dataset='iris', split=0.7)
+# Dectree iris basic: Final mean classification accuracy  92.4 with standard deviation 3.71
 
 
-# testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
+# testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10),
+#                dataset='iris', split=0.7)
+# Dectree iris boost: Final mean classification accuracy  94.6 with standard deviation 3.65
 
 
-# testClassifier(DecisionTreeClassifier(), dataset='vowel',split=0.7)
+# testClassifier(DecisionTreeClassifier(), dataset='vowel', split=0.7)
+# Dectree vowel basic: Final mean classification accuracy  64.1 with standard deviation 4
 
 
-# testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='vowel',split=0.7)
+# testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10),
+#                dataset='vowel', split=0.7)
+# Dectree vowel boosted: Final mean classification accuracy  86.6 with standard deviation 2.98
 
 
-# plotBoundary(DecisionTreeClassifier(), dataset='iris',split=0.7)
+# plotBoundary(DecisionTreeClassifier(), dataset='iris', split=0.7)
+# plotBoundary(DecisionTreeClassifier(), dataset='vowel', split=0.7)
 
 
-# plotBoundary(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
+# plotBoundary(BoostClassifier(DecisionTreeClassifier(), T=10),
+#              dataset='iris', split=0.7)
 
 
 # ## Bonus: Visualize faces classified using boosted decision trees
@@ -282,7 +289,7 @@ class BoostClassifier(object):
 # Note that this part of the assignment is completely voluntary! First, let's check how a boosted decision tree classifier performs on the olivetti data. Note that we need to reduce the dimension a bit using PCA, as the original dimension of the image vectors is `64 x 64 = 4096` elements.
 
 
-# testClassifier(BayesClassifier(), dataset='olivetti',split=0.7, dim=20)
+testClassifier(BayesClassifier(), dataset='olivetti', split=0.7, dim=20)
 
 
 # testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='olivetti',split=0.7, dim=20)
