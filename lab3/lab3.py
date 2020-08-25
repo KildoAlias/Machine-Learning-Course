@@ -244,8 +244,8 @@ class BoostClassifier(object):
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-# testClassifier(BoostClassifier(BayesClassifier(), T=10),
-#                dataset='iris', split=0.7)
+testClassifier(BoostClassifier(BayesClassifier(), T=10),
+               dataset='iris', split=0.7)
 
 
 # testClassifier(BoostClassifier(BayesClassifier(), T=10),
@@ -280,8 +280,8 @@ class BoostClassifier(object):
 # plotBoundary(DecisionTreeClassifier(), dataset='vowel', split=0.7)
 
 
-# plotBoundary(BoostClassifier(DecisionTreeClassifier(), T=10),
-#              dataset='iris', split=0.7)
+plotBoundary(BoostClassifier(DecisionTreeClassifier(), T=10),
+             dataset='iris', split=0.7)
 
 
 # ## Bonus: Visualize faces classified using boosted decision trees
@@ -289,7 +289,7 @@ class BoostClassifier(object):
 # Note that this part of the assignment is completely voluntary! First, let's check how a boosted decision tree classifier performs on the olivetti data. Note that we need to reduce the dimension a bit using PCA, as the original dimension of the image vectors is `64 x 64 = 4096` elements.
 
 
-testClassifier(BayesClassifier(), dataset='olivetti', split=0.7, dim=20)
+# testClassifier(BayesClassifier(), dataset='olivetti', split=0.7, dim=20)
 
 
 # testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='olivetti',split=0.7, dim=20)
